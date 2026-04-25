@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>&#x0417;&#x0435;&#x043B;&#x0451;&#x043D;&#x044B;&#x0439; &#x0441;&#x0430;&#x0434; &#x2503;&#x0420;&#x0430;&#x0441;&#x0441;&#x0430;&#x0434;&#x0430; &#x0446;&#x0432;&#x0435;&#x0442;&#x043E;&#x0432; &#x0438; &#x043E;&#x0432;&#x043E;&#x0449;&#x0435;&#x0439;&#x2503;&#x041A;&#x0430;&#x043B;&#x0438;&#x043D;&#x0438;&#x043D;&#x0433;&#x0440;&#x0430;&#x0434;</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fontsource/playfair-display@5.0.8/index.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fontsource/inter@5.0.8/index.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; color: #2d3a2d; overflow-x: hidden; }
+        .font-playfair { font-family: 'Playfair Display', serif; }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f0f5f0; }
+        ::-webkit-scrollbar-thumb { background: #7fb069; border-radius: 4px; }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInRight {
+            from { opacity: 0; transform: translateX(40px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        @keyframes pulse-soft {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes petal-fall {
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+        }
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .delay-1 { transition-delay: 0.1s; }
+        .delay-2 { transition-delay: 0.2s; }
+        .delay-3 { transition-delay: 0.3s; }
+        .delay-4 { transition-delay: 0.4s; }
+
+        .hero-section {
+            position: relative;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 30%, #a5d6a7 60%, #81c784 100%);
+            overflow: hidden;
+        }
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 80%;
+            height: 200%;
+            background: radial-gradient(ellipse, rgba(255,255,255,0.3) 0%, transparent 70%);
+            animation: pulse-soft 6s ease-in-out infinite;
+        }
+
+        .petal {
+            position: fixed;
+            top: -20px;
+            width: 15px;
+            height: 15px;
+            background: radial-gradient(ellipse at center, #ffb6c1 0%, #ff91a4 100%);
+            border-radius: 50% 0 50% 0;
+            opacity: 0.6;
+            pointer-events: none;
+            z-index: 10;
+            animation: petal-fall linear infinite;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 1rem 2rem;
+            transition: all 0.4s ease;
+            background: transparent;
+        }
+        .navbar.scrolled {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 2px 30px rgba(0, 0, 0, 0.08);
+            padding: 0.6rem 2rem;
+        }
+        .nav-link {
+            position: relative;
+            color: #2d3a2d;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+            transition: color 0.3s;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #7fb069;
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after { width: 100%; }
+        .nav-link:hover { color: #4a7c3f; }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #7fb069 0%, #5a8a3c 100%);
+            color: white;
+            padding: 14px 36px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 15px rgba(127, 176, 105, 0.4);
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(127, 176, 105, 0.5);
+        }
+        .btn-secondary {
+            background: transparent;
+            color: #7fb069;
+            padding: 14px 36px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            border: 2px solid #7fb069;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            background: #7fb069;
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            cursor: pointer;
+        }
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12);
+        }
+        .product-card .card-image {
+            overflow: hidden;
+            height: 280px;
+        }
+        .product-card .card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+        .product-card:hover .card-image img {
+            transform: scale(1.08);
+        }
+        .product-badge {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .product-badge.new {
+            background: linear-gradient(135deg, #7fb069, #5a8a3c);
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #2d3a2d;
+            margin-bottom: 16px;
+        }
+        .section-subtitle {
+            color: #6b7c6b;
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto 50px;
+            line-height: 1.7;
+        }
+        .green-line {
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #7fb069, #5a8a3c);
+            margin: 16px auto 20px;
+            border-radius: 2px;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+        .gallery-item {
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+        }
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        .gallery-item:hover img { transform: scale(1.1); }
+        .gallery-item::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(45, 58, 45, 0.5), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .gallery-item:hover::after { opacity: 1; }
+        .gallery-item:nth-child(1) { grid-column: span 2; grid-row: span 2; }
+
+        .testimonial-card {
+            background: white;
+            border-radius: 20px;
+            padding: 36px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            position: relative;
+        }
+        .testimonial-card::before {
+            content: '"';
+            font-family: 'Playfair Display', serif;
+            font-size: 80px;
+            color: #e8f5e9;
+            position: absolute;
+            top: 10px;
+            left: 24px;
+            line-height: 1;
+        }
+
+        .stat-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            font-weight: 700;
+            color: #7fb069;
+        }
+
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            z-index: 999;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+        }
+        .mobile-menu.active { display: flex; }
+
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ff6b6b;
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
+        .promo-banner {
+            background: linear-gradient(135deg, #2d3a2d 0%, #4a5c4a 100%);
+            color: white;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-content {
+            background: white;
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            animation: scaleIn 0.3s ease;
+            position: relative;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #2d3a2d;
+            color: white;
+            padding: 16px 28px;
+            border-radius: 12px;
+            z-index: 3000;
+            animation: slideDown 0.4s ease;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+        }
+
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #7fb069, #5a8a3c);
+            z-index: 1001;
+            transition: width 0.1s;
+        }
+
+        @media (max-width: 768px) {
+            .section-title { font-size: 2rem; }
+            .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+            .gallery-item:nth-child(1) { grid-column: span 2; grid-row: span 1; }
+            .stat-number { font-size: 2rem; }
+            .hero-content h1 { font-size: 2.2rem !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Scroll Progress Bar -->
+    <div class="scroll-progress" id="scrollProgress"></div>
+
+    <!-- Falling Petals -->
+    <div id="petalsContainer"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <a href="#" class="flex items-center gap-2 text-xl font-playfair font-bold text-green-800">
+                <span class="text-3xl">&#x1F33F;</span>
+                <span class="text-sm md:text-lg">&#x0417;&#x0435;&#x043B;&#x0451;&#x043D;&#x044B;&#x0439; &#x0441;&#x0430;&#x0434; <span class="text-green-500">&#x2503;&#x0420;&#x0430;&#x0441;&#x0441;&#x0430;&#x0434;&#x0430; &#x0446;&#x0432;&#x0435;&#x0442;&#x043E;&#x0432; &#x0438; &#x043E;&#x0432;&#x043E;&#x0449;&#x0435;&#x0439;&#x2503;&#x041A;&#x0430;&#x043B;&#x0438;&#x043D;&#x0438;&#x043D;&#x0433;&#x0440;&#x0430;&#x0434;</span></span>
+            </a>
+            <div class="hidden md:flex items-center gap-8">
+                <a href="#catalog" class="nav-link">&#x041A;&#x0430;&#x0442;&#x0430;&#x043B;&#x043E;&#x0433;</a>
+                <a href="#about" class="nav-link">&#x041E; &#x043D;&#x0430;&#x0441;</a>
+                <a href="#gallery" class="nav-link">&#x0413;&#x0430;&#x043B;&#x0435;&#x0440;&#x0435;&#x044F;</a>
+                <a href="#reviews" class="nav-link">&#x041E;&#x0442;&#x0437;&#x044B;&#x0432;&#x044B;</a>
+            </div>
+            <div class="flex items-center gap-4">
+                <button class="relative text-green-800 text-xl hover:text-green-600 transition" id="cartBtn">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span class="cart-badge" id="cartCount" style="display:none;">0</span>
+                </button>
+                <button class="md:hidden text-green-800 text-2xl" id="menuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <button class="absolute top-6 right-6 text-3xl text-green-800" id="closeMenu">
+            <i class="fas fa-times"></i>
+        </button>
+        <a href="#catalog" class="text-2xl font-playfair text-green-800 mobile-link">&#x041A;&#x0430;&#x0442;&#x0430;&#x043B;&#x043E;&#x0433;</a>
+        <a href="#about" class="text-2xl font-playfair text-green-800 mobile-link">&#x041E; &#x043D;&#x0430;&#x0441;</a>
+        <a href="#gallery" class="text-2xl font-playfair text-green-800 mobile-link">&#x0413;&#x0430;&#x043B;&#x0435;&#x0440;&#x0435;&#x044F;</a>
+        <a href="#reviews" class="text-2xl font-playfair text-green-800 mobile-link">&#x041E;&#x0442;&#x0437;&#x044B;&#x0432;&#x044B;</a>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero-section flex items-center" id="hero">
+        <div class="max-w-7xl mx-auto px-6 py-32 flex flex-col md:flex-row items-center gap-12 relative z-10">
+            <div class="md:w-1/2 hero-content">
+                <h1 class="font-playfair text-5xl md:text-6xl font-bold text-green-900 leading-tight mb-6" style="animation: fadeInUp 0.8s ease 0.2s both;">
+                    &#x0414;&#x0430;&#x0440;&#x0438;&#x0442;&#x0435; <span class="text-green-600">&#x0440;&#x0430;&#x0434;&#x043E;&#x0441;&#x0442;&#x044C;</span><br>&#x0432; &#x043A;&#x0430;&#x0436;&#x0434;&#x043E;&#x043C; <span class="text-green-600">&#x043B;&#x0435;&#x043F;&#x0435;&#x0441;&#x0442;&#x043A;&#x0435;</span>
+                </h1>
+                <p class="text-green-800/70 text-lg leading-relaxed mb-8 max-w-lg" style="animation: fadeInUp 0.8s ease 0.4s both;">
+                    &#x0421;&#x0432;&#x0435;&#x0436;&#x0438;&#x0435; &#x0446;&#x0432;&#x0435;&#x0442;&#x044B; &#x0438; &#x0430;&#x0432;&#x0442;&#x043E;&#x0440;&#x0441;&#x043A;&#x0438;&#x0435; &#x0431;&#x0443;&#x043A;&#x0435;&#x0442;&#x044B; &#x043E;&#x0442; &#x043B;&#x0443;&#x0447;&#x0448;&#x0438;&#x0445; &#x0444;&#x043B;&#x043E;&#x0440;&#x0438;&#x0441;&#x0442;&#x043E;&#x0432; &#x041A;&#x0430;&#x043B;&#x0438;&#x043D;&#x0438;&#x043D;&#x0433;&#x0440;&#x0430;&#x0434;&#x0430;. &#x0421;&#x043E;&#x0437;&#x0434;&#x0430;&#x0451;&#x043C; &#x044D;&#x043C;&#x043E;&#x0446;&#x0438;&#x0438;, &#x043A;&#x043E;&#x0442;&#x043E;&#x0440;&#x044B;&#x0435; &#x043E;&#x0441;&#x0442;&#x0430;&#x044E;&#x0442;&#x0441;&#x044F; &#x043D;&#x0430;&#x0432;&#x0441;&#x0435;&#x0433;&#x0434;&#x0430;.
+                </p>
+                <div class="flex flex-wrap gap-4" style="animation: fadeInUp 0.8s ease 0.6s both;">
+                    <button class="btn-primary" onclick="scrollToSection('catalog')">
+                        <i class="fas fa-seedling mr-2"></i>&#x0421;&#x043C;&#x043E;&#x0442;&#x0440;&#x0435;&#x0442;&#x044C; &#x043A;&#x0430;&#x0442;&#x0430;&#x043B;&#x043E;&#x0433;
+                    </button>
+                    <button class="btn-secondary" onclick="scrollToSection('about')">
+                        <i class="fas fa-heart mr-2"></i>&#x0423;&#x0437;&#x043D;&#x0430;&#x0442;&#x044C; &#x0431;&#x043E;&#x043B;&#x044C;&#x0448;&#x0435;
+                    </button>
+                </div>
+            </div>
+            <div class="md:w-1/2 relative" style="animation: fadeInRight 1s ease 0.4s both;">
+                <div class="relative">
+                    <img src="https://image.qwenlm.ai/public_source/e9ac3bc2-7dd4-44bf-9936-2e9f20722f1a/17c63ad3e-6d07-4349-8ba4-87ac2f4d8e04.png" alt="&#x0426;&#x0432;&#x0435;&#x0442;&#x043E;&#x0447;&#x043D;&#x044B;&#x0439; &#x043C;&#x0430;&#x0433;&#x0430;&#x0437;&#x0438;&#x043D;" class="rounded-3xl shadow-2xl w-full max-w-md mx-auto" style="animation: float 6s ease-in-out infinite;">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Catalog Section -->
+    <section class="py-24 bg-gradient-to-b from-green-50 to-white" id="catalog">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center animate-on-scroll">
+                <span class="text-green-600 font-medium text-sm tracking-widest uppercase">&#x041D;&#x0430;&#x0448;&#x0438; &#x0431;&#x0443;&#x043A;&#x0435;&#x0442;&#x044B;</span>
+                <h2 class="section-title mt-2">&#x041A;&#x0430;&#x0442;&#x0430;&#x043B;&#x043E;&#x0433; &#x0446;&#x0432;&#x0435;&#x0442;&#x043E;&#x0432;</h2>
+                <div class="green-line"></div>
+                <p class="section-subtitle">&#x0412;&#x044B;&#x0431;&#x0435;&#x0440;&#x0438;&#x0442;&#x0435; &#x0438;&#x0434;&#x0435;&#x0430;&#x043B;&#x044C;&#x043D;&#x044B;&#x0439; &#x0431;&#x0443;&#x043A;&#x0435;&#x0442; &#x0434;&#x043B;&#x044F; &#x043B;&#x044E;&#x0431;&#x043E;&#x0433;&#x043E; &#x043F;&#x043E;&#x0432;&#x043E;&#x0434;&#x0430; &#x2014; &#x043E;&#x0442; &#x0440;&#x043E;&#x043C;&#x0430;&#x043D;&#x0442;&#x0438;&#x0447;&#x043D;&#x043E;&#x0433;&#x043E; &#x0441;&#x0432;&#x0438;&#x0434;&#x0430;&#x043D;&#x0438;&#x044F; &#x0434;&#x043E; &#x0442;&#x043E;&#x0440;&#x0436;&#x0435;&#x0441;&#x0442;&#x0432;&#x0435;&#x043D;&#x043D;&#x043E;&#x0433;&#x043E; &#x0441;&#x043E;&#x0431;&#x044B;&#x0442;&#x0438;&#x044F;</p>
+            </div>
+
+            <!-- Filter buttons -->
+            <div class="flex flex-wrap justify-center gap-3 mb-12 animate-on-scroll">
+                <button class="filter-btn active px-6 py-2 rounded-full text-sm font-medium transition-all bg-green-600 text-white" data-filter="all">&#x0412;&#x0441;&#x0435;</button>
+                <button class="filter-btn px-6 py-2 rounded-full text-sm font-medium transition-all bg-white text-green-700 hover:bg-green-600 hover:text-white" data-filter="roses">&#x0420;&#x043E;&#x0437;&#x044B;</button>
+                <button class="filter-btn px-6 py-2 rounded-full text-sm font-medium transition-all bg-white text-green-700 hover:bg-green-600 hover:text-white" data-filter="bouquets">&#x0411;&#x0443;&#x043A;&#x0435;&#x0442;&#x044B;</button>
+                <button class="filter-btn px-6 py-2 rounded-full text-sm font-medium transition-all bg-white text-green-700 hover:bg-green-600 hover:text-white" data-filter="boxes">&#x0412; &#x043A;&#x043E;&#x0440;&#x043E;&#x0431;&#x043A;&#x0435;</button>
+                <button class="filter-btn px-6 py-2 rounded-full text-sm font-medium transition-all bg-white text-green-700 hover:bg-green-600 hover:text-white" data-filter="wedding">&#x0421;&#x0432;&#x0430;&#x0434;&#x0435;&#x0431;&#x043D;&#x044B;&#x0435;</button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="productGrid">
+                <!-- Product 1 -->
+                <div class="product-card animate-on-scroll" data-category="roses" data-name="&#x041D;&#x0435;&#x0436;&#x043D;&#x043E;&#x0441;&#x0442;&#x044C; &#x0440;&#x043E;&#x0437;&#x044B;" data-price="3500">
+                    <div class="card-image relative">
+                        <img src="https://image.qwenlm.ai/public_source/33f93401-5b99-4104-98cc-c7545f935d54/1a305ae6c-3010-46b8-b576-6e1fc174507f.png" alt="&#x041D;&#x0435;&#x0436;&#x043D;&#x043E;&#x0441;&#x0442;&#x044C; &#x0440;&#x043E;&#x0437;&#x044B;">
+                        <span class="product-badge">&#x0425;&#x0438;&#x0442; &#x043F;&#x0440;&#x043E;&#x0434;&#x0430;&#x0436;</span>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-playfair text-lg font-bold text-green-800 mb-2">&#x041D;&#x0435;&#x0436;&#x043D;&#x043E;&#x0441;&#x0442;&#x044C; &#x0440;&#x043E;&#x0437;&#x044B;</h3>
+                        <p class="text-green-600/60 text-sm mb-4">&#x0411;&#x0443;&#x043A;&#x0435;&#x0442; &#x0438;&#x0437; 25 &#x0440;&#x043E;&#x0437;&#x043E;&#x0432;&#x044B;&#x0445; &#x0440;&#x043E;&#x0437; &#x0441; &#x044D;&#x0432;&#x043A;&#x0430;&#x043B;&#x0438;&#x043F;&#x0442;&#x043E;&#x043C;</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-2xl font-bold text-green-800">3 500 &#x20BD;</span>
+                            <button class="add-to-cart w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-600 hover:bg-green-600 hover:text-white transition-all" onclick="addToCart(this)">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 2 -->
+                <div class="product-card animate-on-scroll delay-1" data-category="bouquets" data-name="&#x0412;&#x0435;&#x0441;&#x0435;&#x043D;&#x043D;&#x0435;&#x0435; &#x043D;&#x0430;&#x0441;&#x0442;&#x0440;&#x043E;&#x0435;&#x043D;&#x0438;&#x0435;" data-price="4200">
+                    <div class="card-image relative">
+                        <img src="https://image.qwenlm.ai/public_source/33f93401-5b99-4104-98cc-c7545f935d54/1b2b59565-8697-4786-a6a3-8dc4f77cea12.png" alt="&#x0412;&#x0435;&#x0441;&#x0435;&#x043D;&#x043D;&#x0435;&#x0435; &#x043D;&#x0430;&#x0441;&#x0442;&#x0440;&#x043E;&#x0435;&#x043D;&#x0438;&#x0435;">
+                        <span class="product-badge new">&#x041D;&#x043E;&#x0432;&#x0438;&#x043D;&#x043A;&#x0430;</span>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-playfair text-lg font-bold text-green-800 mb-2">&#x0412;&#x0435;&#x0441;&#x0435;&#x043D;&#x043D;&#x0435;&#x0435; &#x043D;&#x0430;&#x0441;&#x0442;&#x0440;&#x043E;&#x0435;&#x043D;&#x0438;&#x0435;</h3>
+                        <p class="text-green-600/60 text-sm mb-4">&#x041C;&#x0438;&#x043A;&#x0441; &#x0438;&#x0437; &#x0442;&#x044E;&#x043B;&#x044C;&#x043F;&#x0430;&#x043D;&#x043E;&#x0432;, &#x043D;&#x0430;&#x0440;&#x0446;&#x0438;&#x0441;&#x0441;&#x043E;&#x0432; &#x0438; &#x0440;&#x0430;&#x043D;&#x0443;&#x043D;&#x043A;&#x0443;&#x043B;&#x044E;&#x0441;&#x043E;&#x0432;</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-2xl font-bold text-green-800">4 200 &#x20BD;</span>
+                            <button class="add-to-cart w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-600 hover:bg-green-600 hover:text-white transition-all" onclick="addToCart(this)">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 3 -->
+                <div class="product-card animate-on-scroll delay-2" data-category="bouquets" data-name="&#x0411;&#x0435;&#x043B;&#x043E;&#x0441;&#x043D;&#x0435;&#x0436;&#x043D;&#x044B;&#x0435; &#x043B;&#x0438;&#x043B;&#x0438;&#x0438;" data-price="3800">
+                    <div class="card-image relative">
+                        <img src="https://image.qwenlm.ai/public_source/e9ac3bc2-7dd4-44bf-9936-2e9f20722f1a/100510d72-f86e-4314-8af4-c717f3ca6266.png" alt="&#x0411;&#x0435;&#x043B;&#x043E;&#x0441;&#x043D;&#x0435;&#x0436;&#x043D;&#x044B;&#x0435; &#x043B;&#x0438;&#x043B;&#x0438;&#x0438;">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-playfair text-lg font-bold text-green-800 mb-2">&#x0411;&#x0435;&#x043B;&#x043E;&#x0441;&#x043D;&#x0435;&#x0436;&#x043D;&#x044B;&#x0435; &#x043B;&#x0438;&#x043B;&#x0438;&#x0438;</h3>
+                        <p class="text-green-600/60 text-sm mb-4">&#x042D;&#x043B;&#x0435;&#x0433;&#x0430;&#x043D;&#x0442;&#x043D;&#x044B;&#x0439; &#x0431;&#x0443;&#x043A;&#x0435;&#x0442; &#x0438;&#x0437; 15 &#x0431;&#x0435;&#x043B;&#x044B;&#x0445; &#x043B;&#x0438;&#x043B;&#x0438;&#x0439;</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-2xl font-bold text-green-800">3 800 &#x20BD;</span>
+                            <button class="add-to-cart w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-600 hover:bg-green-600 hover:text-white transition-all" onclick="addToCart(this)">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 4 -->
+                <div class="product-card animate-on-scroll" data-category="boxes" data-name="&#x0420;&#x043E;&#x0437;&#x044B; &#x0432; &#x0448;&#x043B;&#x044F;&#x043F;&#x043D;&#x043E;&#x0439; &#x043A;&#x043E;&#x0440;&#x043E;&#x0431;&#x043A;&#x0435;" data-price="5500">
+                    <div class="card-image relative">
+                        <img src="https://image.qwenlm.ai/public_source/33f93401-5b99-4104-98cc-c7545f935d54/1a305ae6c-3010-46b8-b576-6e1fc174507f.png" alt="&#x0420;&#x043E;&#x0437;&#x044B; &#x0432; &#x0448;&#x043B;&#x044F;&#x043F;&#x043D;&#x043E;&#x0439; &#x043A;&#x043E;&#x0440;&#x043E;&#x0431;&#x043A;&#x0435;" style="filter: saturate(1.2);">
+                        <span class="product-badge">&#x041F;&#x0440;&#x0435;&#x043C;&#x0438;&#x0443;&#x043C;</span>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-playfair text-lg font-bold text-green-800 mb-2">&#x0420;&#x043E;&#x0437;&#x044B; &#x0432; &#x0448;&#x043B;&#x044F;&#x043F;&#x043D;&#x043E;&#x0439; &#x043A;&#x043E;&#x0440;&#x043E;&#x0431;&#x043A;&#x0435;</h3>
+                        <p class="text-green-600/60 text-sm mb-4">31 &#x043A;&#x0440;&#x0430;&#x0441;&#x043D;&#x0430;&#x044F; &#x0440;&#x043E;&#x0437;&#x0430; &#x0432; &#x044D;&#x043B;&#x0435;&#x0433;&#x0430;&#x043D;&#x0442;&#x043D;&#x043E;&#x0439; &#x043A;&#x043E;&#x0440;&#x043E;&#x0431;&#x043A;&#x0435;</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-2xl font-bold text-green-800">5 500 &#x20BD;</span>
+                            <button class="add-to-cart w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-600 hover:bg-green-600 hover:text-white transition-all" onclick="addToCart(this)">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 5 -->
+                <div class="product-card animate-on-scroll delay-1" data-category="wedding" data-name="&#x0421;&#x0432;&#x0430;&#x0434;&#x0435;&#x0431;&#x043D;&#x0430;&#x044F; &#x043A;&#x043B;&#x0430;&#x0441;&#x0441;&#x0438;&#x043A;&#x0430;" data-price="7500">
+                    <div class="card-image relative">
+                        <img src="https://image.qwenlm.ai/public_source/e9ac3bc2-7dd4-44bf-9936-2e9f20722f1a/100510d72-f86e-4314-8af4-c717f3ca6266.png" alt="&#x0421;&#x0432;&#x0430;&#x0434;&#x0435;&#x0431;&#x043D;&#x0430;&#x044F; &#x043A;&#x043B;&#x0430;&#x0441;&#x0441;&#x0438;&#x043A;&#x0430;" style="filter: brightness(1.05);">
+                        <span class="product-badge new">&#x0421;&#x0432;&#x0430;&#x0434;&#x0435;&#x0431;&#x043D;&#x044B;&#x0439;</span>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-playfair text-lg font-bold text-green-800 mb-2">&#x0421;&#x0432;&#x0430;&#x0434;&#x0435;&#x0431;&#x043D;&#x0430;&#x044F; &#x043A;&#x043B;&#x0430;&#x0441;&#x0441;&#x0438;&#x043A;&#x0430;</h3>
+                        <p class="text-green-600/60 text-sm mb-4">&#x0411;&#x0443;&#x043A;&#x0435;&#x0442; &#x043D;&#x0435;&#x0432;&#x0435;&#x0441;&#x0442;&#x044B; &#x0438;&#x0437; &#x043F;&#x0438;&#x043E;&#x043D;&#x043E;&#x0432;&#x0438;&#x0434;&#x043D;&#x044B;&#x0445; &#x0440;&#x043E;&#x0437; &#x0438; &#x044D;&#x0432;&#x043A;&#x0430;&#x043B;&#x0438;&#x043F;&#x0442;&#x0430;</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-2xl font-bold text-green-800">7 500 &#x20BD;</span>
+                            <button class="add-to-cart w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-600 hover:bg-green-600 hover:text-white transition-all" onclick="addToCart(this)">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 6 -->
+                <div class="product-card animate-on-scroll delay-2" data-category="bouquets" data-name="&#x041B;&#x0430;&#x0432;&#x0430;&#x043D;&#x0434;&#x043E;&#x0432;&#x044B;&#x0435; &#x0441;&#x043D;&#x044B;" data-price="4800">
+                    <div class="card-image relative">
+                        <img src="https://image.qwenlm.ai/public_source/33f93401-5b99-4104-98cc-c7545f935d54/1b2b59565-8697-4786-a6a3-8dc4f77cea12.png" alt="&#x041B;&#x0430;&#x0432;&#x0430;&#x043D;&#x0434;&#x043E;&#x0432;&#x044B;&#x0435; &#x0441;&#x043D;&#x044B;" style="filter: hue-rotate(30deg);">
+                        <span class="product-badge new">&#x041D;&#x043E;&#x0432;&#x0438;&#x043D;&#x043A;&#x0430;</span>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-playfair text-lg font-bold text-green-800 mb-2">&#x041B;&#x0430;&#x0432;&#x0430;&#x043D;&#x0434;&#x043E;&#x0432;&#x044B;&#x0435; &#x0441;&#x043D;&#x044B;</h3>
+                        <p class="text-green-600/60 text-sm mb-4">&#x0411;&#x0443;&#x043A;&#x0435;&#x0442; &#x0438;&#x0437; &#x043B;&#x0430;&#x0432;&#x0430;&#x043D;&#x0434;&#x044B;, &#x0433;&#x043E;&#x0440;&#x0442;&#x0435;&#x043D;&#x0437;&#x0438;&#x0439; &#x0438; &#x0441;&#x0442;&#x0430;&#x0442;&#x0438;&#x0446;&#x044B;</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-2xl font-bold text-green-800">4 800 &#x20BD;</span>
+                            <button class="add-to-cart w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-600 hover:bg-green-600 hover:text-white transition-all" onclick="addToCart(this)">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-16 animate-on-scroll">
+                <button class="btn-secondary" onclick="showToast('&#x041A;&#x0430;&#x0442;&#x0430;&#x043B;&#x043E;&#x0433; &#x043E;&#x0431;&#x043D;&#x043E;&#x0432;&#x043B;&#x044F;&#x0435;&#x0442;&#x0441;&#x044F;! &#x0421;&#x043B;&#x0435;&#x0434;&#x0438;&#x0442;&#x0435; &#x0437;&#x0430; &#x043D;&#x043E;&#x0432;&#x0438;&#x043D;&#x043A;&#x0430;&#x043C;&#x0438;')">
+                    <i class="fas fa-th-large mr-2"></i>&#x041F;&#x043E;&#x043A;&#x0430;&#x0437;&#x0430;&#x0442;&#x044C; &#x0432;&#x0441;&#x0435; &#x0431;&#x0443;&#x043A;&#x0435;&#x0442;&#x044B;
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Promo Banner -->
+    <section class="promo-banner py-16">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-8">
+            <div class="text-center md:text-left">
+                <h3 class="font-playfair text-3xl md:text-4xl font-bold text-white mb-4">&#x0421;&#x043A;&#x0438;&#x0434;&#x043A;&#x0430; 15% &#x043D;&#x0430; &#x043F;&#x0435;&#x0440;&#x0432;&#x044B;&#x0439; &#x0437;&#x0430;&#x043A;&#x0430;&#x0437;</h3>
+                <p class="text-green-200/80 text-lg">&#x0418;&#x0441;&#x043F;&#x043E;&#x043B;&#x044C;&#x0437;&#x0443;&#x0439;&#x0442;&#x0435; &#x043F;&#x0440;&#x043E;&#x043C;&#x043E;&#x043A;&#x043E;&#x0434; <span class="font-bold text-white bg-white/20 px-3 py-1 rounded-lg">GREEN39</span> &#x043F;&#x0440;&#x0438; &#x043E;&#x0444;&#x043E;&#x0440;&#x043C;&#x043B;&#x0435;&#x043D;&#x0438;&#x0438;</p>
+            </div>
+            <button class="btn-primary" style="background: white; color: #2d3a2d;" onclick="showToast('&#x041F;&#x0440;&#x043E;&#x043C;&#x043E;&#x043A;&#x043E;&#x0434; GREEN39 &#x0441;&#x043A;&#x043E;&#x043F;&#x0438;&#x0440;&#x043E;&#x0432;&#x0430;&#x043D;!')">
+                <i class="fas fa-gift mr-2"></i>&#x041F;&#x043E;&#x043B;&#x0443;&#x0447;&#x0438;&#x0442;&#x044C; &#x0441;&#x043A;&#x0438;&#x0434;&#x043A;&#x0443;
+            </button>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="py-24 bg-gradient-to-b from-green-50 to-white" id="about">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex flex-col lg:flex-row items-center gap-16">
+                <div class="lg:w-1/2 animate-on-scroll">
+                    <div class="relative">
+                        <img src="https://image.qwenlm.ai/public_source/e9ac3bc2-7dd4-44bf-9936-2e9f20722f1a/136de2f66-6375-4184-9340-749d44f35405.png" alt="&#x041E; &#x043D;&#x0430;&#x0448;&#x0435;&#x043C; &#x043C;&#x0430;&#x0433;&#x0430;&#x0437;&#x0438;&#x043D;&#x0435;" class="rounded-3xl shadow-xl w-full">
+                        <div class="absolute -bottom-8 -right-8 bg-green-600 text-white rounded-2xl p-6 shadow-lg hidden md:block">
+                            <div class="stat-number text-white">6+</div>
+                            <div class="text-green-100 text-sm">&#x043B;&#x0435;&#x0442; &#x043D;&#x0430; &#x0440;&#x044B;&#x043D;&#x043A;&#x0435;</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="lg:w-1/2 animate-on-scroll delay-2">
+                    <span class="text-green-600 font-medium text-sm tracking-widest uppercase">&#x041E; &#x043D;&#x0430;&#x0448;&#x0435;&#x043C; &#x043C;&#x0430;&#x0433;&#x0430;&#x0437;&#x0438;&#x043D;&#x0435;</span>
+                    <h2 class="section-title mt-2 text-left">&#x0417;&#x0435;&#x043B;&#x0451;&#x043D;&#x044B;&#x0439; &#x0441;&#x0430;&#x0434;</h2>
+                    <div class="green-line" style="margin-left:0;"></div>
+                    <p class="text-green-700/70 leading-relaxed mb-6">
+                        &#x041E;&#x041B;&#x042C;&#x0413;&#x0410;, &#x041A;&#x0410;&#x041B;&#x0418;&#x041D;&#x0418;&#x041D;&#x0413;&#x0420;&#x0410;&#x0414; (&#x041F;&#x0420;&#x0410;&#x0412;&#x0414;&#x0418;&#x041D;&#x0421;&#x041A;)
+                    </p>
+                    <p class="text-green-700/70 leading-relaxed mb-4">
+                        &#x1F4AF; &#x0421;&#x043E;&#x0431;&#x0441;&#x0442;&#x0432;&#x0435;&#x043D;&#x043D;&#x043E;&#x0435; &#x043F;&#x0440;&#x043E;&#x0438;&#x0437;&#x0432;&#x043E;&#x0434;&#x0441;&#x0442;&#x0432;&#x043E;
+                    </p>
+                    <p class="text-green-700/70 leading-relaxed mb-4">
+                        &#x1F497; &#x0420;&#x0430;&#x0434;&#x0443;&#x0435;&#x043C; &#x0432;&#x0430;&#x0441; &#x0443;&#x0436;&#x0435; &#x0431;&#x043E;&#x043B;&#x0435;&#x0435; 6 &#x043B;&#x0435;&#x0442;
+                    </p>
+                    <p class="text-green-700/70 leading-relaxed mb-8">
+                        &#x1F4E9; &#x041D;&#x0430;&#x043F;&#x0438;&#x0448;&#x0438;&#x0442;&#x0435; &#x043D;&#x0430;&#x043C; &#x0432; WhatsApp
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section class="py-24 bg-white" id="gallery">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center animate-on-scroll">
+                <span class="text-green-600 font-medium text-sm tracking-widest uppercase">&#x041D;&#x0430;&#x0448;&#x0438; &#x0440;&#x0430;&#x0431;&#x043E;&#x0442;&#x044B;</span>
+                <h2 class="section-title mt-2">&#x0413;&#x0430;&#x043B;&#x0435;&#x0440;&#x0435;&#x044F;</h2>
+                <div class="green-line"></div>
+                <p class="section-subtitle">&#x041F;&#x0435;&#x0442;&#x0443;&#x043D;&#x0438;&#x0438;, &#x043A;&#x0430;&#x043B;&#x0438;&#x0431;&#x0440;&#x0430;&#x0445;&#x043E;&#x0430; &#x0438; &#x043B;&#x0443;&#x043A;&#x043E;&#x0432;&#x0438;&#x0446;&#x044B; &#x043B;&#x0438;&#x043B;&#x0438;&#x0439; &#x2014; &#x043D;&#x0430;&#x0448;&#x0430; &#x0433;&#x043E;&#x0440;&#x0434;&#x043E;&#x0441;&#x0442;&#x044C; &#x0438; &#x043B;&#x044E;&#x0431;&#x043E;&#x0432;&#x044C; &#x043A; &#x0446;&#x0432;&#x0435;&#x0442;&#x0430;&#x043C;</p>
+            </div>
+
+            <div class="gallery-grid animate-on-scroll">
+                <div class="gallery-item h-80">
+                    <img src="https://image.qwenlm.ai/public_source/e9ac3bc2-7dd4-44bf-9936-2e9f20722f1a/17c63ad3e-6d07-4349-8ba4-87ac2f4d8e04.png" alt="&#x041F;&#x0435;&#x0442;&#x0443;&#x043D;&#x0438;&#x0438; &#x0438; &#x043A;&#x0430;&#x043B;&#x0438;&#x0431;&#x0440;&#x0430;&#x0445;&#x043E;&#x0430;">
+                </div>
+                <div class="gallery-item h-80">
+                    <img src="https://image.qwenlm.ai/public_source/e9ac3bc2-7dd4-44bf-9936-2e9f20722f1a/100510d72-f86e-4314-8af4-c717f3ca6266.png" alt="&#x041B;&#x0443;&#x043A;&#x043E;&#x0432;&#x0438;&#x0446;&#x044B; &#x043B;&#x0438;&#x043B;&#x0438;&#x0439;">
+                </div>
+                <div class="gallery-item h-80">
+                    <img src="https://image.qwenlm.ai/public_source/e9ac3bc2-7dd4-44bf-9936-2e9f20722f1a/1f2c24c19-e8c6-4ddb-912b-a12abe4b5b29.png" alt="&#x041F;&#x0435;&#x0442;&#x0443;&#x043D;&#x0438;&#x0438; &#x0432; &#x0442;&#x0435;&#x043F;&#x043B;&#x0438;&#x0446;&#x0435;">
+                </div>
+                <div class="gallery-item h-80">
+                    <img src="https://image.qwenlm.ai/public_source/e9ac3bc2-7dd4-44bf-9936-2e9f20722f1a/1e79f0278-ec1f-4cc6-8a70-ac4a84b3e5a0.png" alt="&#x041B;&#x0443;&#x043A;&#x043E;&#x0432;&#x0438;&#x0446;&#x044B; &#x043B;&#x0438;&#x043B;&#x0438;&#x0439; &#x0432; &#x0433;&#x043E;&#x0440;&#x0448;&#x043A;&#x0430;&#x0445;">
+                </div>
+                <div class="gallery-item h-80">
+                    <img src="https://image.qwenlm.ai/public_source/e9ac3bc2-7dd4-44bf-9936-2e9f20722f1a/18ef1a592-75ae-4cd2-a71d-5e4a4ad3fb92.png" alt="&#x0420;&#x043E;&#x0437;&#x043E;&#x0432;&#x044B;&#x0435; &#x043F;&#x0435;&#x0442;&#x0443;&#x043D;&#x0438;&#x0438;">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reviews Section -->
+    <section class="py-24 bg-gradient-to-b from-green-50 to-white" id="reviews">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center animate-on-scroll">
+                <span class="text-green-600 font-medium text-sm tracking-widest uppercase">&#x041E;&#x0442;&#x0437;&#x044B;&#x0432;&#x044B; &#x043A;&#x043B;&#x0438;&#x0435;&#x043D;&#x0442;&#x043E;&#x0432;</span>
+                <h2 class="section-title mt-2">&#x0427;&#x0442;&#x043E; &#x0433;&#x043E;&#x0432;&#x043E;&#x0440;&#x044F;&#x0442; &#x043E; &#x043D;&#x0430;&#x0441;</h2>
+                <div class="green-line"></div>
+                <p class="section-subtitle">&#x041D;&#x0430;&#x043C; &#x0434;&#x043E;&#x0432;&#x0435;&#x0440;&#x044F;&#x044E;&#x0442; &#x0442;&#x044B;&#x0441;&#x044F;&#x0447;&#x0438; &#x043A;&#x043B;&#x0438;&#x0435;&#x043D;&#x0442;&#x043E;&#x0432; &#x0432; &#x041A;&#x0430;&#x043B;&#x0438;&#x043D;&#x0438;&#x043D;&#x0433;&#x0440;&#x0430;&#x0434;&#x0435; &#x0438; &#x0437;&#x0430; &#x0435;&#x0433;&#x043E; &#x043F;&#x0440;&#x0435;&#x0434;&#x0435;&#x043B;&#x0430;&#x043C;&#x0438;</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="testimonial-card animate-on-scroll">
+                    <div class="flex items-center gap-1 text-yellow-400 mb-4 mt-4">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <p class="text-green-700/70 leading-relaxed mb-6 relative z-10">&#x0417;&#x0430;&#x043A;&#x0430;&#x0437;&#x044B;&#x0432;&#x0430;&#x043B;&#x0430; &#x0431;&#x0443;&#x043A;&#x0435;&#x0442; &#x043D;&#x0430; &#x0434;&#x0435;&#x043D;&#x044C; &#x0440;&#x043E;&#x0436;&#x0434;&#x0435;&#x043D;&#x0438;&#x044F; &#x043C;&#x0430;&#x043C;&#x044B;. &#x041F;&#x0440;&#x0438;&#x0432;&#x0435;&#x0437;&#x043B;&#x0438; &#x0432;&#x043E;&#x0432;&#x0440;&#x0435;&#x043C;&#x044F;, &#x0431;&#x0443;&#x043A;&#x0435;&#x0442; &#x0431;&#x044B;&#x043B; &#x043F;&#x043E;&#x0442;&#x0440;&#x044F;&#x0441;&#x0430;&#x044E;&#x0449;&#x0438;&#x0439;! &#x041C;&#x0430;&#x043C;&#x0430; &#x0431;&#x044B;&#x043B;&#x0430; &#x0432; &#x0432;&#x043E;&#x0441;&#x0442;&#x043E;&#x0440;&#x0433;&#x0435;. &#x0421;&#x043F;&#x0430;&#x0441;&#x0438;&#x0431;&#x043E;!</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-green-200 rounded-full flex items-center justify-center text-green-700 font-bold">&#x0410;&#x041A;</div>
+                        <div>
+                            <div class="font-semibold text-green-800">&#x0410;&#x043D;&#x043D;&#x0430; &#x041A;&#x043E;&#x0437;&#x043B;&#x043E;&#x0432;&#x0430;</div>
+                            <div class="text-green-600/60 text-sm">&#x041A;&#x0430;&#x043B;&#x0438;&#x043D;&#x0438;&#x043D;&#x0433;&#x0440;&#x0430;&#x0434;</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card animate-on-scroll delay-1">
+                    <div class="flex items-center gap-1 text-yellow-400 mb-4 mt-4">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <p class="text-green-700/70 leading-relaxed mb-6 relative z-10">&#x041E;&#x0444;&#x043E;&#x0440;&#x043C;&#x043B;&#x044F;&#x043B;&#x0438; &#x0441;&#x0432;&#x0430;&#x0434;&#x044C;&#x0431;&#x0443; &#x2014; &#x0440;&#x0435;&#x0437;&#x0443;&#x043B;&#x044C;&#x0442;&#x0430;&#x0442; &#x043F;&#x0440;&#x0435;&#x0432;&#x0437;&#x043E;&#x0448;&#x0451;&#x043B; &#x0432;&#x0441;&#x0435; &#x043E;&#x0436;&#x0438;&#x0434;&#x0430;&#x043D;&#x0438;&#x044F;! &#x0410;&#x0440;&#x043A;&#x0430;, &#x0431;&#x0443;&#x043A;&#x0435;&#x0442; &#x043D;&#x0435;&#x0432;&#x0435;&#x0441;&#x0442;&#x044B;, &#x0431;&#x0443;&#x0442;&#x043E;&#x043D;&#x044C;&#x0435;&#x0440;&#x043A;&#x0438; &#x2014; &#x0432;&#x0441;&#x0451; &#x0431;&#x044B;&#x043B;&#x043E; &#x0438;&#x0434;&#x0435;&#x0430;&#x043B;&#x044C;&#x043D;&#x043E;.</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-green-200 rounded-full flex items-center justify-center text-green-700 font-bold">&#x0414;&#x041C;</div>
+                        <div>
+                            <div class="font-semibold text-green-800">&#x0414;&#x043C;&#x0438;&#x0442;&#x0440;&#x0438;&#x0439; &#x041C;&#x043E;&#x0440;&#x043E;&#x0437;&#x043E;&#x0432;</div>
+                            <div class="text-green-600/60 text-sm">&#x0417;&#x0435;&#x043B;&#x0435;&#x043D;&#x043E;&#x0433;&#x0440;&#x0430;&#x0434;&#x0441;&#x043A;</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card animate-on-scroll delay-2">
+                    <div class="flex items-center gap-1 text-yellow-400 mb-4 mt-4">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <p class="text-green-700/70 leading-relaxed mb-6 relative z-10">&#x041F;&#x043E;&#x0434;&#x043F;&#x0438;&#x0441;&#x043A;&#x0430; &#x043D;&#x0430; &#x0446;&#x0432;&#x0435;&#x0442;&#x044B; &#x0432; &#x043E;&#x0444;&#x0438;&#x0441; &#x2014; &#x044D;&#x0442;&#x043E; &#x043B;&#x0443;&#x0447;&#x0448;&#x0435;&#x0435; &#x0440;&#x0435;&#x0448;&#x0435;&#x043D;&#x0438;&#x0435;! &#x041A;&#x0430;&#x0436;&#x0434;&#x0443;&#x044E; &#x043D;&#x0435;&#x0434;&#x0435;&#x043B;&#x044E; &#x043D;&#x043E;&#x0432;&#x044B;&#x0435; &#x043A;&#x043E;&#x043C;&#x043F;&#x043E;&#x0437;&#x0438;&#x0446;&#x0438;&#x0438;, &#x0441;&#x043E;&#x0442;&#x0440;&#x0443;&#x0434;&#x043D;&#x0438;&#x043A;&#x0438; &#x0432; &#x0432;&#x043E;&#x0441;&#x0442;&#x043E;&#x0440;&#x0433;&#x0435;. &#x0420;&#x0435;&#x043A;&#x043E;&#x043C;&#x0435;&#x043D;&#x0434;&#x0443;&#x044E;!</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-green-200 rounded-full flex items-center justify-center text-green-700 font-bold">&#x0415;&#x0421;</div>
+                        <div>
+                            <div class="font-semibold text-green-800">&#x0415;&#x043B;&#x0435;&#x043D;&#x0430; &#x0421;&#x043C;&#x0438;&#x0440;&#x043D;&#x043E;&#x0432;&#x0430;</div>
+                            <div class="text-green-600/60 text-sm">&#x0421;&#x0432;&#x0435;&#x0442;&#x043B;&#x043E;&#x0433;&#x043E;&#x0440;&#x0441;&#x043A;</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-green-900 text-white py-16">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 mb-12">
+                <div>
+                    <div class="flex items-center gap-2 text-xl font-playfair font-bold mb-4">
+                        <span class="text-3xl">&#x1F33F;</span>
+                        <span>&#x0417;&#x0435;&#x043B;&#x0451;&#x043D;&#x044B;&#x0439; &#x0441;&#x0430;&#x0434; <span class="text-green-400">&#x2503;&#x0420;&#x0430;&#x0441;&#x0441;&#x0430;&#x0434;&#x0430; &#x0446;&#x0432;&#x0435;&#x0442;&#x043E;&#x0432; &#x0438; &#x043E;&#x0432;&#x043E;&#x0449;&#x0435;&#x0439;&#x2503;&#x041A;&#x0430;&#x043B;&#x0438;&#x043D;&#x0438;&#x043D;&#x0433;&#x0440;&#x0430;&#x0434;</span></span>
+                    </div>
+                    <p class="text-green-300/60 text-sm leading-relaxed">&#x0426;&#x0432;&#x0435;&#x0442;&#x043E;&#x0447;&#x043D;&#x044B;&#x0439; &#x043C;&#x0430;&#x0433;&#x0430;&#x0437;&#x0438;&#x043D; &#x0432; &#x041A;&#x0430;&#x043B;&#x0438;&#x043D;&#x0438;&#x043D;&#x0433;&#x0440;&#x0430;&#x0434;&#x0441;&#x043A;&#x043E;&#x0439; &#x043E;&#x0431;&#x043B;&#x0430;&#x0441;&#x0442;&#x0438;. &#x0421;&#x0432;&#x0435;&#x0436;&#x0438;&#x0435; &#x0446;&#x0432;&#x0435;&#x0442;&#x044B;, &#x0430;&#x0432;&#x0442;&#x043E;&#x0440;&#x0441;&#x043A;&#x0438;&#x0435; &#x0431;&#x0443;&#x043A;&#x0435;&#x0442;&#x044B; &#x0438; &#x043E;&#x0444;&#x043E;&#x0440;&#x043C;&#x043B;&#x0435;&#x043D;&#x0438;&#x0435; &#x043C;&#x0435;&#x0440;&#x043E;&#x043F;&#x0440;&#x0438;&#x044F;&#x0442;&#x0438;&#x0439;.</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-lg mb-4">&#x041D;&#x0430;&#x0448;&#x0438; &#x043A;&#x043E;&#x043D;&#x0442;&#x0430;&#x043A;&#x0442;&#x044B;</h4>
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-3">
+                            <i class="fas fa-map-marker-alt mt-1 text-green-400"></i>
+                            <div class="text-green-300/80 text-sm leading-relaxed">
+                                <strong class="text-white">&#x0410;&#x0414;&#x0420;&#x0415;&#x0421;:</strong><br>
+                                &#x0433;. &#x041F;&#x0440;&#x0430;&#x0432;&#x0434;&#x0438;&#x043D;&#x0441;&#x043A;, &#x0443;&#x043B;. &#x042D;&#x043B;&#x0435;&#x043A;&#x0442;&#x0440;&#x0438;&#x0447;&#x0435;&#x0441;&#x043A;&#x0430;&#x044F;, 47<br>
+                                <span class="text-green-400">&#x0438;&#x043B;&#x0438; &#x043F;&#x043E; &#x0441;&#x0443;&#x0431;&#x0431;&#x043E;&#x0442;&#x0430;&#x043C;:</span> &#x0433;. &#x041A;&#x0430;&#x043B;&#x0438;&#x043D;&#x0438;&#x043D;&#x0433;&#x0440;&#x0430;&#x0434;, &#x0443;&#x043B;. &#x041F;&#x043E;&#x0440;&#x0442;&#x043E;&#x0432;&#x0430;&#x044F;, 20
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <i class="fas fa-phone mt-1 text-green-400"></i>
+                            <div class="text-green-300/80 text-sm">
+                                <strong class="text-white">&#x0422;&#x0435;&#x043B;&#x0435;&#x0444;&#x043E;&#x043D;:</strong><br>
+                                +7 911 493 07 91
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <i class="fas fa-clock mt-1 text-green-400"></i>
+                            <div class="text-green-300/80 text-sm">
+                                <strong class="text-white">&#x0420;&#x0435;&#x0436;&#x0438;&#x043C; &#x0440;&#x0430;&#x0431;&#x043E;&#x0442;&#x044B;:</strong><br>
+                                &#x041D;&#x0430; &#x0434;&#x0430;&#x043D;&#x043D;&#x044B;&#x0439; &#x043C;&#x043E;&#x043C;&#x0435;&#x043D;&#x0442; &#x0443;&#x0442;&#x043E;&#x0447;&#x043D;&#x044F;&#x0435;&#x0442;&#x0441;&#x044F;
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-green-800 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+                <p class="text-green-400/40 text-sm">&#x00A9; 2026 &#x0417;&#x0435;&#x043B;&#x0451;&#x043D;&#x044B;&#x0439; &#x0441;&#x0430;&#x0434;. &#x0412;&#x0441;&#x0435; &#x043F;&#x0440;&#x0430;&#x0432;&#x0430; &#x0437;&#x0430;&#x0449;&#x0438;&#x0449;&#x0435;&#x043D;&#x044B;.</p>
+                <div class="flex gap-4">
+                    <a href="#" class="text-green-400/40 hover:text-white transition"><i class="fab fa-instagram text-xl"></i></a>
+                    <a href="#" class="text-green-400/40 hover:text-white transition"><i class="fab fa-telegram text-xl"></i></a>
+                    <a href="#" class="text-green-400/40 hover:text-white transition"><i class="fab fa-whatsapp text-xl"></i></a>
+                    <a href="#" class="text-green-400/40 hover:text-white transition"><i class="fab fa-vk text-xl"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Cart Modal -->
+    <div class="modal-overlay" id="cartModal">
+        <div class="modal-content">
+            <button class="absolute top-4 right-4 text-green-400 hover:text-green-800 text-2xl" onclick="closeModal('cartModal')">
+                <i class="fas fa-times"></i>
+            </button>
+            <h3 class="font-playfair text-2xl font-bold text-green-800 mb-6">
+                <i class="fas fa-shopping-bag mr-2 text-green-600"></i>&#x041A;&#x043E;&#x0440;&#x0437;&#x0438;&#x043D;&#x0430;
+            </h3>
+            <div id="cartItems">
+                <p class="text-green-600/60 text-center py-8">&#x041A;&#x043E;&#x0440;&#x0437;&#x0438;&#x043D;&#x0430; &#x043F;&#x0443;&#x0441;&#x0442;&#x0430;</p>
+            </div>
+            <div class="mt-6 pt-6 border-t border-green-100" id="cartTotal" style="display:none;">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="font-semibold text-green-800">&#x0418;&#x0442;&#x043E;&#x0433;&#x043E;:</span>
+                    <span class="text-2xl font-bold text-green-800" id="totalPrice">0 &#x20BD;</span>
+                </div>
+                <button class="btn-primary w-full" onclick="showToast('&#x0417;&#x0430;&#x043A;&#x0430;&#x0437; &#x043E;&#x0444;&#x043E;&#x0440;&#x043C;&#x043B;&#x0435;&#x043D;! &#x041C;&#x044B; &#x0441;&#x0432;&#x044F;&#x0436;&#x0435;&#x043C;&#x0441;&#x044F; &#x0441; &#x0432;&#x0430;&#x043C;&#x0438;.')">
+                    <i class="fas fa-check mr-2"></i>&#x041E;&#x0444;&#x043E;&#x0440;&#x043C;&#x0438;&#x0442;&#x044C; &#x0437;&#x0430;&#x043A;&#x0430;&#x0437;
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer"></div>
+
+    <!-- Back to top button -->
+    <button id="backToTop" class="fixed bottom-8 right-8 w-14 h-14 bg-green-600 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-green-500 transition-all z-50 opacity-0 pointer-events-none" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script>
+        let cart = [];
+
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollPercent = (scrollTop / docHeight) * 100;
+            document.getElementById('scrollProgress').style.width = scrollPercent + '%';
+
+            const navbar = document.getElementById('navbar');
+            if (scrollTop > 80) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+
+            const backBtn = document.getElementById('backToTop');
+            if (scrollTop > 600) {
+                backBtn.style.opacity = '1';
+                backBtn.style.pointerEvents = 'auto';
+            } else {
+                backBtn.style.opacity = '0';
+                backBtn.style.pointerEvents = 'none';
+            }
+        });
+
+        const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        document.getElementById('menuBtn').addEventListener('click', () => {
+            document.getElementById('mobileMenu').classList.add('active');
+        });
+        document.getElementById('closeMenu').addEventListener('click', () => {
+            document.getElementById('mobileMenu').classList.remove('active');
+        });
+        document.querySelectorAll('.mobile-link').forEach(link => {
+            link.addEventListener('click', () => {
+                document.getElementById('mobileMenu').classList.remove('active');
+            });
+        });
+
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => {
+                    b.classList.remove('active', 'bg-green-600', 'text-white');
+                    b.classList.add('bg-white', 'text-green-700');
+                });
+                btn.classList.add('active', 'bg-green-600', 'text-white');
+                btn.classList.remove('bg-white', 'text-green-700');
+
+                const filter = btn.getAttribute('data-filter');
+                document.querySelectorAll('.product-card').forEach(card => {
+                    if (filter === 'all' || card.getAttribute('data-category') === filter) {
+                        card.style.display = 'block';
+                        card.style.animation = 'scaleIn 0.4s ease';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        function addToCart(btn) {
+            const card = btn.closest('.product-card');
+            const name = card.getAttribute('data-name');
+            const price = parseInt(card.getAttribute('data-price'));
+
+            const existing = cart.find(item => item.name === name);
+            if (existing) {
+                existing.qty++;
+            } else {
+                cart.push({ name, price, qty: 1 });
+            }
+
+            updateCartUI();
+            showToast(name + ' &#x0434;&#x043E;&#x0431;&#x0430;&#x0432;&#x043B;&#x0435;&#x043D; &#x0432; &#x043A;&#x043E;&#x0440;&#x0437;&#x0438;&#x043D;&#x0443;!');
+
+            btn.innerHTML = '<i class="fas fa-check"></i>';
+            btn.classList.add('bg-green-600', 'text-white');
+            setTimeout(() => {
+                btn.innerHTML = '<i class="fas fa-plus"></i>';
+                btn.classList.remove('bg-green-600', 'text-white');
+            }, 1500);
+        }
+
+        function updateCartUI() {
+            const countEl = document.getElementById('cartCount');
+            const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+
+            if (totalItems > 0) {
+                countEl.style.display = 'flex';
+                countEl.textContent = totalItems;
+            } else {
+                countEl.style.display = 'none';
+            }
+
+            const cartItemsEl = document.getElementById('cartItems');
+            const cartTotalEl = document.getElementById('cartTotal');
+            const totalPriceEl = document.getElementById('totalPrice');
+
+            if (cart.length === 0) {
+                cartItemsEl.innerHTML = '<p class="text-green-600/60 text-center py-8">&#x041A;&#x043E;&#x0440;&#x0437;&#x0438;&#x043D;&#x0430; &#x043F;&#x0443;&#x0441;&#x0442;&#x0430;</p>';
+                cartTotalEl.style.display = 'none';
+            } else {
+                let html = '';
+                let total = 0;
+                cart.forEach((item, idx) => {
+                    total += item.price * item.qty;
+                    html += `
+                        <div class="flex items-center justify-between py-3 border-b border-green-50">
+                            <div>
+                                <div class="font-semibold text-green-800">${item.name}</div>
+                                <div class="text-green-600/60 text-sm">${item.price.toLocaleString('ru-RU')} &#x20BD; &#x00D7; ${item.qty}</div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="font-bold text-green-800">${(item.price * item.qty).toLocaleString('ru-RU')} &#x20BD;</span>
+                                <button class="text-red-400 hover:text-red-600 transition" onclick="removeFromCart(${idx})">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+                cartItemsEl.innerHTML = html;
+                cartTotalEl.style.display = 'block';
+                totalPriceEl.textContent = total.toLocaleString('ru-RU') + ' &#x20BD;';
+            }
+        }
+
+        function removeFromCart(idx) {
+            cart.splice(idx, 1);
+            updateCartUI();
+        }
+
+        document.getElementById('cartBtn').addEventListener('click', () => {
+            document.getElementById('cartModal').classList.add('active');
+        });
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        document.getElementById('cartModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('cartModal')) {
+                closeModal('cartModal');
+            }
+        });
+
+        function showToast(message) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = '<i class="fas fa-check-circle mr-2"></i>' + message;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(20px)';
+                toast.style.transition = 'all 0.4s ease';
+                setTimeout(() => toast.remove(), 400);
+            }, 3000);
+        }
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        function createPetals() {
+            const container = document.getElementById('petalsContainer');
+            const petalCount = 12;
+            for (let i = 0; i < petalCount; i++) {
+                const petal = document.createElement('div');
+                petal.className = 'petal';
+                petal.style.left = Math.random() * 100 + 'vw';
+                petal.style.animationDuration = (Math.random() * 8 + 8) + 's';
+                petal.style.animationDelay = (Math.random() * 10) + 's';
+                petal.style.width = (Math.random() * 10 + 8) + 'px';
+                petal.style.height = (Math.random() * 10 + 8) + 'px';
+                petal.style.opacity = Math.random() * 0.3 + 0.1;
+                container.appendChild(petal);
+            }
+        }
+        createPetals();
+    </script>
+</body>
+</html>
+
